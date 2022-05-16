@@ -1,10 +1,14 @@
 package jp.takachiho.ble_communicator
 
+//import android.Manifest
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
+
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
+//import android.bluetooth.le.*
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,13 +20,13 @@ import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
+import kotlinx.android.synthetic.main.activity_device_list.*
 
 class DeviceListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     // 定数
     private val REQUEST_ENABLEBLUETOOTH = 1 // Bluetooth機能の有効化要求時の識別コード
-    private val SCAN_PERIOD: Long = 10000 // スキャン時間。単位はミリ秒。
+    private val SCAN_PERIOD: Long = 50000 // スキャン時間。単位はミリ秒。
     val EXTRAS_DEVICE_NAME = "DEVICE_NAME"
     val EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS"
 
@@ -36,7 +40,6 @@ class DeviceListActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
     // スキャン中かどうかのフラグ
     private var mScanning = false
 
-
     // デバイススキャンコールバック
     private val mLeScanCallback: ScanCallback = object : ScanCallback() {
         // スキャンに成功（アドバタイジングは一定間隔で常に発行されているため、本関数は一定間隔で呼ばれ続ける）
@@ -44,7 +47,6 @@ class DeviceListActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
             super.onScanResult(callbackType, result)
             runOnUiThread { mDeviceListAdapter!!.addDevice(result.device) }
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,11 +57,12 @@ class DeviceListActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         setResult(RESULT_CANCELED)
 
         // リストビューの設定
-        mDeviceListAdapter = DeviceListAdapter(this) // ビューアダプターの初期化
-        val listView = findViewById<ListView>(R.id.devicelist) // リストビューの取得
-        listView.adapter = mDeviceListAdapter // リストビューにビューアダプターをセット
-        listView.onItemClickListener = this // クリックリスナーオブジェクトのセット
+        mDeviceListAdapter = DeviceListAdapter(this, this) // ビューアダプターの初期化
 
+        val listView = findViewById<ListView>(R.id.devicelist) // リストビューの取得
+
+        listView.adapter = mDeviceListAdapter
+        listView.onItemClickListener = this // クリックリスナーオブジェクトのセット
 
         // UIスレッド操作ハンドラの作成（「一定時間後にスキャンをやめる処理」で使用する）
         mHandler = Handler()
@@ -67,24 +70,14 @@ class DeviceListActivity : AppCompatActivity(), AdapterView.OnItemClickListener 
         // Bluetoothアダプタの取得
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = bluetoothManager.adapter
+
         if (null == mBluetoothAdapter) {    // デバイス（＝スマホ）がBluetoothをサポートしていない
             Toast.makeText(this, R.string.bluetooth_is_not_supported, Toast.LENGTH_SHORT).show()
             finish() // アプリ終了宣言
             return
         }
-/*
-        listView.setOnItemClickListener { _, _, position, _ ->
-            val device = mDeviceListAdapter!!.getItem(position) as BluetoothDevice
-            // 戻り値の設定
-            val intent = Intent()
-            intent.putExtra(EXTRAS_DEVICE_NAME, device.name)
-            intent.putExtra(EXTRAS_DEVICE_ADDRESS, device.address)
-            setResult(RESULT_OK, intent)
-            finish()
-        }
- */
-    }
 
+    }
 
     // 初回表示時、および、ポーズからの復帰時
     override fun onResume() {

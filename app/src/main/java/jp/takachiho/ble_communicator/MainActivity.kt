@@ -17,11 +17,11 @@ import android.view.MenuItem
 //import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-//import kotlinx.android.synthetic.main.activity_device_list.*
-//import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.activity_device_list.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.listitem_device.*
 
 
-//import kotlinx.android.synthetic.main.activity_main.*
 
 //var mBluetoothLeScanner: BluetoothLeScanner? = null
 //var mScanCallback: ScanCallback? = null
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
     }
-/*
+
     // 機能の有効化ダイアログの操作結果
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
@@ -81,17 +81,17 @@ class MainActivity : AppCompatActivity() {
 //                        mDeviceAddress = data.getStringExtra(DeviceListActivity.EXTRAS_DEVICE_ADDRESS)!!
                     }
                 } else {
-                    strDeviceName = ""
-                    mDeviceAddress = ""
+                    strDeviceName = "1"
+                    mDeviceAddress = "2"
                 }
-//                (findViewById(R.id.textview_devicename) as TextView).text = strDeviceName
-                (findViewById(R.id.textview_deviceaddress) as TextView).text = mDeviceAddress
+//                (findViewById<TextView>(R.id.textview_devicename)).text = strDeviceName
+//                (findViewById<TextView>(R.id.textview_deviceaddress)).text = mDeviceAddress
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
- */
+
 
     // 初回表示時、および、ポーズからの復帰時
     override fun onResume() {

@@ -1,5 +1,6 @@
 package jp.takachiho.ble_communicator
 
+import android.app.Activity
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,12 +9,18 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import java.util.*
+import kotlin.collections.ArrayList
 
 
-class DeviceListAdapter(context: Context) : BaseAdapter(){
+class DeviceListAdapter(context: Context, activity: Activity) : BaseAdapter(){
 
     private var mDeviceList: ArrayList<BluetoothDevice>? = null
     private var mInflator: LayoutInflater? = null
+
+    init {
+        mDeviceList = ArrayList()
+        mInflator = activity.layoutInflater
+    }
 
     // リストへの追加
     fun addDevice(device: BluetoothDevice) {
